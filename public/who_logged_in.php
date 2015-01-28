@@ -50,6 +50,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	#get the result as an assocciative array. 
 	$user_list = mysqli_fetch_all ($r, MYSQLI_ASSOC);
 	
+	#get the fields headings.
+	$headings = array(); 
+	while ($fieldinfo=mysqli_fetch_field($r)) {
+		$headings[] = $fieldinfo->name; 
+	}
+	
 	#free the result object. 
 	mysqli_free_result($r);
 	
@@ -82,9 +88,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php
 	
 	if(isset($user_list) && is_array($user_list) && !empty($user_list)) {
-		$html = '';
+
+		$html = '<table border="1"><thead>'; 
 		
-		$html = "<table><thead></thead><tbody>";
+		if(isset($headings) && is_array($headings) && !empty($headings)) {
+			$html .= '<tr>'; 
+			foreach($headings as $name) {
+				$html .= '<th>' . $name . '</th>'; 
+			}
+			
+			$html .= '</tr>'; 
+		}
+		
+		$html .= '</thead><tbody>';
 		
 		foreach($user_list as $row) {
 			$html .= "<tr>";
@@ -96,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$html .= "</tr>"; 
 		}
 		
-		$html .= "</tbody><tfoot></tfoot></table>";
+		$html .= '</tbody><tfoot></tfoot></table>';
 		
 		echo($html); 
 	} else {
