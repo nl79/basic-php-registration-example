@@ -37,18 +37,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 	#convert the start to the mysql datetime format.
 	$datetime = date("Y-m-d H:i:s", $start);
-	
+ 	
 	#select query
 	$q = "SELECT user_id, first_name, last_name, email, user_level,registration_date, last_logged_in
 		    FROM users
 		    WHERE last_logged_in between '" . mysqli_real_escape_string ($dbc,$datetime) . "'
 		    AND NOW()";
-	
+
+ 
 	#execute the query. 
 	$r = mysqli_query ($dbc, $q) or trigger_error("Query: $q\n<br />MySQL Error: " . mysqli_error($dbc));
-		
+ 	
 	#get the result as an assocciative array. 
-	$user_list = mysqli_fetch_all ($r, MYSQLI_ASSOC);
+	$user_list = array();
+	while($arr = mysqli_fetch_assoc($r)) {
+		$user_list[] = $arr; 
+	}
+
 	
 	#get the fields headings.
 	$headings = array(); 
