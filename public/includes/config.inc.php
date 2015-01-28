@@ -18,8 +18,8 @@ define('LIVE', FALSE);
 define('EMAIL', 'InsertRealAddressHere');
 
 // Site URL (base for all redirections):
-define ('BASE_URL', 'https://web.njit.edu/~nl79/it302/it302register/public/');
-
+#define ('BASE_URL', 'https://web.njit.edu/~nl79/it302/it302register/public/');
+define ('BASE_URL', 'http://osl81.njit.edu/~nl79/it302/it302register/public/'); 
 // Location of the MySQL connection script:
 define ('MYSQL', '../../mysqli_connect.php');
 
