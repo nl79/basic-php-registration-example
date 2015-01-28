@@ -35,6 +35,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			// Register the values:
 			$_SESSION = mysqli_fetch_array ($r, MYSQLI_ASSOC); 
 			mysqli_free_result($r);
+			
+			//update the last login field.
+			$update_q = 'UPDATE users SET last_logged_in = NOW() WHERE user_id = ' . $_SESSION['user_id'];
+			 
+			$update_r = mysqli_query ($dbc, $update_q) or trigger_error("Query: $q\n<br />MySQL Error: " . mysqli_error($dbc));
+		
+			//close the connection	 
 			mysqli_close($dbc);
 							
 			// Redirect the user:
