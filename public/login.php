@@ -1,6 +1,7 @@
 <?php # Script 18.8 - login.php
 // This is the login page for the site.
-require ('includes/config.inc.php'); 
+// Include the configuration file:
+require ('../../config.inc.php');
 $page_title = 'Login';
 include ('includes/header.html');
 

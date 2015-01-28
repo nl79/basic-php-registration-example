@@ -1,6 +1,9 @@
 <?php # Script 18.9 - logout.php
 // This is the logout page for the site.
-require ('includes/config.inc.php'); 
+#require ('includes/config.inc.php');
+// Include the configuration file:
+require ('../../config.inc.php');
+
 $page_title = 'Logout';
 include ('includes/header.html');
 

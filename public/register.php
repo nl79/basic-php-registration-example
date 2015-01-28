@@ -1,6 +1,7 @@
 <?php # Script 18.6 - register.php
 // This is the registration page for the site.
-require ('includes/config.inc.php');
+
+require ('../../config.inc.php');
 $page_title = 'Register';
 include ('includes/header.html');
 

@@ -1,6 +1,6 @@
 <?php # Script 18.7 - activate.php
-// This page activates the user's account.
-require ('includes/config.inc.php'); 
+// Include the configuration file:
+require ('../../config.inc.php');
 $page_title = 'Activate Your Account';
 include ('includes/header.html');
 

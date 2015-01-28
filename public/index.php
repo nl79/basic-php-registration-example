@@ -2,7 +2,7 @@
 // This is the main page for the site.
 
 // Include the configuration file:
-require ('includes/config.inc.php'); 
+require ('../../config.inc.php'); 
 
 // Set the page title and include the HTML header:
 $page_title = 'Welcome to this Site!';
