@@ -4,8 +4,9 @@ require ('../../config.inc.php');
 $page_title = 'Change Your Password';
 include ('includes/header.html');
 
-// If no first_name session variable exists, redirect the user:
-if (!isset($_SESSION['user_id'])) {
+// If no first_name session variable exists, or if the user
+// is not an administrator redirect the user:
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_level']) || $_SESSION['user_level'] != 1) {
 	
 	$url = BASE_URL . 'index.php'; // Define the URL.
 	ob_end_clean(); // Delete the buffer.
@@ -23,9 +24,42 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$total = 0; 
     
 	#validate the input.
+	#create a valid flag
+	$valid = true; 
+	
+	// Trim all the incoming data:
+	$trimmed = array_map('trim', $_POST);
+	
+	// seconds
+	if (preg_match ('/^[1-5]?[0-9]$/', $trimmed['sec'])) {
+		$sec = $trimmed['sec'];
+	} else {
+		$valid = false; 
+		echo '<p class="error">Seconds Invalid</p>';
+	}
+	
+	// minutes
+	if (preg_match ('/^[1-5]?[0-9]$/', $trimmed['min'])) {
+		$min = $trimmed['min'];
+	} else {
+		$valid = false; 
+		echo '<p class="error">Minutes Invalid</p>';
+	}
+	
+	// minutes
+	if (preg_match ('/^\d{1,3}$/', $trimmed['hr'])) {
+		$hr = $trimmed['hr'];
+	} else {
+		$valid = false; 
+		echo '<p class="error">Minutes Invalid</p>';
+	}
+	
+	
+	/*
 	$sec = isset($_REQUEST['sec']) && is_numeric($_REQUEST['sec']) ? $_REQUEST['sec'] : 0;
 	$min = isset($_REQUEST['min']) && is_numeric($_REQUEST['min']) ? $_REQUEST['min'] : 0;
 	$hr = isset($_REQUEST['hr']) && is_numeric($_REQUEST['hr']) ? $_REQUEST['hr'] : 0;
+	*/
 	
 	#accumulate the total
 	$total += $sec;
@@ -77,13 +111,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		<label for='input-hours'>Hours:</label>
 		<input id='input-hours' type='text' name='hr'
-		       value='<?php if(isset($_REQUEST['hr'])) { echo($_REQUEST['hr']); } ?>' />
+		       placeholder = '0'
+		       value='<?php if(isset($_REQUEST['hr'])) { echo($_REQUEST['hr']); } else {echo('0'); } ?>' />
 		<label for='input-minutes'>Minutes:</label>
 		<input id='input-minutes' type='text' name='min'
-			value='<?php if(isset($_REQUEST['min'])) { echo($_REQUEST['min']); } ?>' />
+		       placeholder = '0'
+			value='<?php if(isset($_REQUEST['min'])) { echo($_REQUEST['min']); } else {echo('0'); } ?>' />
 		<label for='input-seconds'>Seconds:</label>
 		<input id='input-seconds' type='text' name='sec'
-		       value='<?php if(isset($_REQUEST['sec'])) { echo($_REQUEST['sec']); } ?>' />
+		       placeholder = '0'
+		       value='<?php if(isset($_REQUEST['sec'])) { echo($_REQUEST['sec']); } else {echo('0'); } ?>' />
 		<input type="submit" name="submit" value="Submit" />
 	
 	</fieldset>
