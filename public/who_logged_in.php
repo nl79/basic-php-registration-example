@@ -61,43 +61,57 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$hr = isset($_REQUEST['hr']) && is_numeric($_REQUEST['hr']) ? $_REQUEST['hr'] : 0;
 	*/
 	
-	#accumulate the total
-	$total += $sec;
-	$total += ($min * 60);
-	$total += ($hr * 60 * 60);
+	/*
+	 *if valid, calculate the time in unix seconds and
+	 *query the database.
+	 */
 	
-	#get the starting date range.
-	$start = (time() - $total);
+	if($valid) {
+		#accumulate the total
+		$total += $sec;
+		$total += ($min * 60);
+		$total += ($hr * 60 * 60);
+		
+		#get the starting date range.
+		$start = (time() - $total);
+		
+		#convert the start to the mysql datetime format.
+		$datetime = date("Y-m-d H:i:s", $start);
+		
+		#select query
+		/*
+		$q = "SELECT user_id, first_name, last_name, email, user_level,registration_date, last_logged_in
+			    FROM users
+			    WHERE last_logged_in between '" . mysqli_real_escape_string ($dbc,$datetime) . "'
+			    AND NOW()";
+		*/
+		$q = "SELECT user_id, concat(first_name, ' ', last_name) as `name`, email, user_level, last_logged_in, 
+			SEC_TO_TIME(UNIX_TIMESTAMP() - UNIX_TIMESTAMP(last_logged_in)) as time_logged_in
+			FROM users 
+			WHERE last_logged_in between '". mysqli_real_escape_string ($dbc,$datetime) . "' AND NOW()";
+		
+	 
+		#execute the query. 
+		$r = mysqli_query ($dbc, $q) or trigger_error("Query: $q\n<br />MySQL Error: " . mysqli_error($dbc));
+		
+		#get the result as an assocciative array. 
+		$user_list = array();
+		while($arr = mysqli_fetch_assoc($r)) {
+			$user_list[] = $arr; 
+		}
 	
-	#convert the start to the mysql datetime format.
-	$datetime = date("Y-m-d H:i:s", $start);
- 	
-	#select query
-	$q = "SELECT user_id, first_name, last_name, email, user_level,registration_date, last_logged_in
-		    FROM users
-		    WHERE last_logged_in between '" . mysqli_real_escape_string ($dbc,$datetime) . "'
-		    AND NOW()";
-
- 
-	#execute the query. 
-	$r = mysqli_query ($dbc, $q) or trigger_error("Query: $q\n<br />MySQL Error: " . mysqli_error($dbc));
- 	
-	#get the result as an assocciative array. 
-	$user_list = array();
-	while($arr = mysqli_fetch_assoc($r)) {
-		$user_list[] = $arr; 
+		
+		#get the fields headings.
+		$headings = array(); 
+		while ($fieldinfo=mysqli_fetch_field($r)) {
+			$headings[] = $fieldinfo->name; 
+		}
+		
+		#free the result object. 
+		mysqli_free_result($r);
+	} else {
+		echo '<p class="error">Please Correct the Errors and Try Again</p>';
 	}
-
-	
-	#get the fields headings.
-	$headings = array(); 
-	while ($fieldinfo=mysqli_fetch_field($r)) {
-		$headings[] = $fieldinfo->name; 
-	}
-	
-	#free the result object. 
-	mysqli_free_result($r);
-	
 	#larsolartorvik.com
 			
 	
