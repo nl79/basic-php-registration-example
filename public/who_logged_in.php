@@ -1,8 +1,53 @@
 <?php # Script 18.11 - change_password.php
 // Include the configuration file:
 require ('../../config.inc.php');
-$page_title = 'Change Your Password';
+$page_title = 'Who Logged In';
 include ('includes/header.html');
+
+
+function renderResult($input){
+	$headings = $input['headings'];
+	$user_list = $input['user_list']; 
+	
+	$html = '';
+	
+	if(isset($user_list) && is_array($user_list) && !empty($user_list)) {
+
+		$html = '<table border="1"><thead>'; 
+		
+		if(isset($headings) && is_array($headings) && !empty($headings)) {
+			$html .= '<tr>'; 
+			foreach($headings as $name) {
+				$html .= '<th>' . $name . '</th>'; 
+			}
+			
+			$html .= '</tr>'; 
+		}
+		
+		$html .= '</thead><tbody>';
+		
+		foreach($user_list as $row) {
+			$html .= "<tr>";
+			
+			foreach($row as $field) {
+				$html .= '<td>' . $field . '</td>'; 
+			}
+			
+			$html .= "</tr>"; 
+		}
+		
+		$html .= '</tbody><tfoot></tfoot></table>';
+		
+		
+	} else {
+		
+		$html = '<p>No Users Logged In</p>'; 
+	}
+	
+	return $html; 
+	
+}
+
 
 // If no first_name session variable exists, or if the user
 // is not an administrator redirect the user:
@@ -37,13 +82,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$valid = false; 
 		echo '<p class="error">Seconds Invalid</p>';
 	}
-	
+	/*
 	// minutes
 	if (preg_match ('/^[1-5]?[0-9]$/', $trimmed['min'])) {
 		$min = $trimmed['min'];
 	} else {
 		$valid = false; 
 		echo '<p class="error">Minutes Invalid</p>';
+	}
+	*/
+	
+	if(isset($trimmed['min']) && is_numeric($trimmed['min'])) {
+		$min = $trimmed['min']; 
+	} else {
+		$valid = false; 
 	}
 	
 	// minutes
@@ -60,10 +112,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	 */
 	
 	if($valid) {
+		
 		#accumulate the total
 		$total += $sec;
 		$total += ($min * 60);
 		$total += ($hr * 60 * 60);
+		
+		
 		
 		#get the starting date range.
 		$start = (time() - $total);
@@ -106,8 +161,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		#check if the current request is an Ajax call. If so draw the table and return.
 		if(isset($_REQUEST['ajax']) && strtolower($_REQUEST['ajax']) == 't') {
+			ob_clean();
+			
 			#build the table and echo the results.
 			
+			echo(renderResult(Array('user_list' => $user_list,
+						'headings' => $headings))); 
+			
+			exit; 
 		}
 	} else {
 		echo '<p class="error">Please Correct the Errors and Try Again</p>';
@@ -119,6 +180,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 ?>
 
 <h1>View Recently Logged In Users</h1>
+
+<!--
 <form action="who_logged_in.php" method="post">
 	
 	<fieldset>
@@ -140,7 +203,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	</fieldset>
         
 </form>
-
+-->
 <script>
   $(function() {
 	
@@ -159,7 +222,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			clearTimeout(slideTimeout);
 		}
 		
-		slideTimeout = setTimeout(function(){ alert(ui.value); }, 3000); 
+		slideTimeout = setTimeout(function(){
+			//fire an ajax event.
+			
+			$.ajax(
+			       {url: 'http://localhost/it302register/public/who_logged_in.php',
+			       type: 'POST', 
+			       data: {'min': ui.value,
+					'sec': 0,
+					'hr': 0,
+					'ajax':'t'}
+			       }).done(function(data) {
+					$('#div-content').html(data); 
+				});
+			
+		}, 3000); 
 
 	}
     }); 
@@ -174,39 +251,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <div id="slider"></div>
 
 
-<?php
+<div id='div-content'>
 	
-	if(isset($user_list) && is_array($user_list) && !empty($user_list)) {
-
-		$html = '<table border="1"><thead>'; 
-		
-		if(isset($headings) && is_array($headings) && !empty($headings)) {
-			$html .= '<tr>'; 
-			foreach($headings as $name) {
-				$html .= '<th>' . $name . '</th>'; 
-			}
-			
-			$html .= '</tr>'; 
-		}
-		
-		$html .= '</thead><tbody>';
-		
-		foreach($user_list as $row) {
-			$html .= "<tr>";
-			
-			foreach($row as $field) {
-				$html .= '<td>' . $field . '</td>'; 
-			}
-			
-			$html .= "</tr>"; 
-		}
-		
-		$html .= '</tbody><tfoot></tfoot></table>';
-		
-		echo($html); 
-	} else {
-		echo('<p>No Users Logged In</p>'); 
-	}
-?>
-
+</div>
 <?php include ('includes/footer.html'); ?>
