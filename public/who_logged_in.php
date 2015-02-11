@@ -54,13 +54,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		echo '<p class="error">Minutes Invalid</p>';
 	}
 	
-	
-	/*
-	$sec = isset($_REQUEST['sec']) && is_numeric($_REQUEST['sec']) ? $_REQUEST['sec'] : 0;
-	$min = isset($_REQUEST['min']) && is_numeric($_REQUEST['min']) ? $_REQUEST['min'] : 0;
-	$hr = isset($_REQUEST['hr']) && is_numeric($_REQUEST['hr']) ? $_REQUEST['hr'] : 0;
-	*/
-	
 	/*
 	 *if valid, calculate the time in unix seconds and
 	 *query the database.
@@ -109,6 +102,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		#free the result object. 
 		mysqli_free_result($r);
+		
+		
+		#check if the current request is an Ajax call. If so draw the table and return.
+		if(isset($_REQUEST['ajax']) && strtolower($_REQUEST['ajax']) == 't') {
+			#build the table and echo the results.
+			
+		}
 	} else {
 		echo '<p class="error">Please Correct the Errors and Try Again</p>';
 	}
@@ -140,6 +140,39 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	</fieldset>
         
 </form>
+
+<script>
+  $(function() {
+	
+	var slideTimeout = null; 	
+    $( "#slider" ).slider( {
+	min: 1,
+	max: 500,
+	slide: function( event, ui ) {
+		console.log(ui.value); 
+		$('#time').val(ui.value);
+
+	},
+	change: function( event, ui ) {
+		 
+		if( slideTimeout ) {
+			clearTimeout(slideTimeout);
+		}
+		
+		slideTimeout = setTimeout(function(){ alert(ui.value); }, 3000); 
+
+	}
+    }); 
+  });
+    
+</script>
+
+<p>
+  <label for="time">Time(minutes):</label>
+  <input type="text" id="time" readonly style="border:0; color:#f6931f; font-weight:bold;">
+</p>
+<div id="slider"></div>
+
 
 <?php
 	
@@ -174,7 +207,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	} else {
 		echo('<p>No Users Logged In</p>'); 
 	}
-
 ?>
 
 <?php include ('includes/footer.html'); ?>
