@@ -226,7 +226,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			//fire an ajax event.
 			
 			$.ajax(
-			       {url: 'http://localhost/it302register/public/who_logged_in.php',
+			      {url:' <?php echo(BASE_URL);  ?>/who_logged_in.php',
 			       type: 'POST', 
 			       data: {'min': ui.value,
 					'sec': 0,
