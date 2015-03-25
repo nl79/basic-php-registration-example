@@ -2,11 +2,17 @@
 // This is the main page for the site.
 
 // Include the configuration file:
-require ('../../config.inc.php'); 
+require ('../../config.inc.php');
 
 // Set the page title and include the HTML header:
 $page_title = 'Welcome to this Site!';
 include ('includes/header.html');
+
+/* validate the capcha has been passed. */
+if(!isset($_SESSION['capcha']) || empty($_SESSION['capcha']) || $_SESSION['capcha'] !== true) {
+    include("validate.php");
+    exit;
+}
 
 // Welcome the user (by name if they are logged in):
 echo '<h1>Welcome';

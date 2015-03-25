@@ -5,6 +5,13 @@ require ('../../config.inc.php');
 $page_title = 'Login';
 include ('includes/header.html');
 
+/* validate the capcha has been passed. */
+if(!isset($_SESSION['capcha']) || empty($_SESSION['capcha']) || $_SESSION['capcha'] !== true) {
+
+    include("validate.php");
+    exit;
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	require (MYSQL);
 	
