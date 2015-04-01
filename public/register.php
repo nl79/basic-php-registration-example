@@ -7,8 +7,8 @@ include ('includes/header.html');
 
 /* validate the capcha has been passed. */
 if(!isset($_SESSION['capcha']) || empty($_SESSION['capcha']) || $_SESSION['capcha'] !== true) {
-
-    include("validate.php");
+    header("Location: /it302register/public/validate.php");
+    //include("validate.php");
     exit;
 }
 

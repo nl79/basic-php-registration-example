@@ -20,7 +20,7 @@ if(isset($_POST['done'])){
             exit;
         }
         else {
-            echo('here');
+
             $_SESSION['capcha'] = false;
         }
 
