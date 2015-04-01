@@ -40,8 +40,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		if (@mysqli_num_rows($r) == 1) { // A match was made.
 
+            // extract the current capcha value.
+            $capcha = isset($_SESSION['capcha']) || empty($_SESSION['capcha']) ? $_SESSION['capcha'] : false;
+
 			// Register the values:
-			$_SESSION = mysqli_fetch_array ($r, MYSQLI_ASSOC); 
+			$_SESSION = mysqli_fetch_array ($r, MYSQLI_ASSOC);
+
+            //set the previous capche value into the session array.
+            //set the capcha to true in the session.
+            $_SESSION['capcha'] = $capcha;
+
 			mysqli_free_result($r);
 			
 			//update the last login field.
